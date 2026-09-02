@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: dacexy-backend
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 4
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dacexy-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: dacexy-redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: RAZORPAY_PLAN_BUSINESS
+        sync: false
+      - key: RAZORPAY_PLAN_ENTERPRISE
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: ENABLE_CACHE
+        value: "true"
+
+databases:
+  - name: dacexy-db
+    databaseName: dacexy
+    user: dacexy_user
+    plan: starter
+
+redis:
+  - name: dacexy-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru

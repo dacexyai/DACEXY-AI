@@ -1,0 +1,5 @@
+# SHA-256 manifest for the final integrated desktop sources.
+b28da1103dfbb2c1a344da2d0210e8aa1b4f614a426aed1df13d33bbe233c46a fe/dacexy/desktop/electron/main.cjs
+32d67670438b98a4aa062397ddde2b9b41535afa5c1dbfca0c7ca0b0e32902fb fe/dacexy/desktop/electron/preload.cjs
+96a4623973cf60e8e853ff3a8c040e35533830325c9f63811a7291c9f6b1c27c  fe/dacexy/desktop/src/lib/gateway.ts
+773a80c24a29df198f66caa9152e5bef063851c436fffeb7380fd624c4b44949  fe/dacexy/desktop/src/services/agent.ts

@@ -1,0 +1,42 @@
+DACEXY AI 1.0.1 — FINAL INTEGRATED RELEASE CANDIDATE
+Date: 2026-08-22
+
+STATUS: FINAL INTEGRATED RC — STATIC/LOCAL GATES PASS; WINDOWS CERTIFICATION PENDING
+
+AGENT INTEGRATION
+-----------------
+- Working OpenClaw agent package used as execution-engine source.
+- 630 business skills merged and mirrored into both installer trees.
+- OpenClaw pinned to 2026.7.1-2.
+- Node.js 22.22.3 MSI SHA-256 verified by installer.
+- Provider API keys are never baked into release artifacts.
+- DACEXY connects directly to the OpenClaw Gateway at 127.0.0.1:18789.
+- Desktop client version synchronized to 1.0.1.
+- Desktop connection/reconnect/queue lifecycle hardened.
+- Connect/Disconnect UI controls the real gateway client.
+- Uninstaller no longer blindly removes the user's entire .openclaw directory.
+- Production Docker explicitly sets APP_ENV=production.
+
+VALIDATION
+----------
+[PASS] scripts/release_verify.py
+[PASS] scripts/verify_release.py
+[PASS] Fresh DB Alembic upgrade/downgrade/upgrade
+[PASS] Alembic head 007
+[PASS] Backend Python AST syntax
+[PASS] 630 bundled skills
+[PASS] Installer tree mirrored
+[PASS] Bridge Node syntax
+[PASS] Bridge WebSocket E2E with fake OpenClaw
+[PASS] Bridge Origin rejection was tested in the earlier hardened bridge pass
+[PASS] Desktop release SHA-256 manifest
+[PASS] Zero .pyc files
+
+WINDOWS FINAL GATE
+------------------
+A clean Windows 10/11 machine must still execute the packaged EXE and verify:
+Node install -> pinned OpenClaw install -> 630 skills -> Gateway -> bridge -> Electron -> real provider response -> real desktop automation.
+
+ENVIRONMENT LIMITATION
+----------------------
+The audit environment is Linux and has no network access. Therefore Windows/NSIS execution, real provider requests, and the full dependency-backed frontend/pytest suites cannot honestly be marked as passed here.
