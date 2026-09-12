@@ -1,0 +1,53 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15
+    environment:
+      APP_ENV: production
+      POSTGRES_DB: dacexy
+      POSTGRES_USER: dacexy_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dacexy_user -d dacexy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:7-alpine
+    # Redis is private to the Docker network; never publish it to the host in production.
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql://dacexy_user:${POSTGRES_PASSWORD}@db:5432/dacexy
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+      RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET}
+      RAZORPAY_PLAN_BUSINESS: ${RAZORPAY_PLAN_BUSINESS}
+      RAZORPAY_PLAN_ENTERPRISE: ${RAZORPAY_PLAN_ENTERPRISE}
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL:?FRONTEND_URL must be set to the public production frontend URL}
+      REDIS_URL: redis://redis:6379/0
+      ENABLE_CACHE: "true"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen(\'http://localhost:8000/api/health\', timeout=5)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+volumes:
+  pg_data:
